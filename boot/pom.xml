@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>provider_8001</artifactId>
+        <groupId>com.yang</groupId>
+        <version>${version}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>boot</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.yang</groupId>
+            <artifactId>web</artifactId>
+            <version>${version}</version>
+        </dependency>
+    </dependencies>
+
+
+    <build>
+        <plugins>
+
+            <!--打包成可执行的jar包，主模块必须加此插件，否则打出来的jar包无法运行-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <!--排除后依赖包，排出后需使用java -jar -Dloader.path=? 指定依赖包路径；自测Dloader.path没生效，原因未知-->
+                <!--<configuration>-->
+                    <!--<includes>-->
+                        <!--&lt;!&ndash; 项目启动jar包中排除依赖包 &ndash;&gt;-->
+                        <!--<include>-->
+                            <!--<groupId>non-exists</groupId>-->
+                            <!--<artifactId>non-exists</artifactId>-->
+                        <!--</include>-->
+                    <!--</includes>-->
+                <!--</configuration>-->
+                <!--下面这段貌似没什么用-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<goals>-->
+                            <!--<goal>repackage</goal>&lt;!&ndash;可以把依赖的包都打包到生成的Jar包中&ndash;&gt;-->
+                            <!--&lt;!&ndash;<goal>build-info</goal>&lt;!&ndash;generate build-info.properties&ndash;&gt;&ndash;&gt;-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            </plugin>
+
+
+            <!--&lt;!&ndash;打包时，排除资源文件；运行jar包时，使用java -jar xxx.jar \-\-spring.config.location=? 指定资源目录（xxx.jar必须写在前面）>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <!-- excludes\includes 是根据编译后的classes这个路径计算的 -->
+                    <excludes>
+                        <exclude>/**.properties</exclude>
+                        <exclude>/**.yml</exclude>
+                        -->
+                        <!-- 排除掉所有资源文件 -->
+                        <!--<exclude>/**.*</exclude>-->
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <!--压缩包的文件名-->
+                            <finalName>${project.name}-${version}</finalName>
+                            <!--是否在压缩包文件名后追加assemblyId, 默认true-->
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <!--指定assembly.xml的位置-->
+                            <descriptors>
+                                <descriptor>./assembly.xml</descriptor>
+                            </descriptors>
+                            <!--指定压缩包存放目录-->
+                            <!--<outputDirectory>${basedir}/dist</outputDirectory>-->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
+        <resources>
+            <resource>
+                <directory>../config/${profileActive}</directory>
+                <includes>
+                    <include>*.yml</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
+
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <profileActive>dev</profileActive>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <profileActive>test</profileActive>
+            </properties>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <profileActive>prod</profileActive>
+            </properties>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
+
+</project>

@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: provider
+  profiles:
+    include:
+      - tomcat
+      - nacos

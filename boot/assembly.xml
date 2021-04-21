@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly>
+    <id>assembly-demo-xml-id</id>
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+
+        <fileSet>
+            <directory>${project.parent.basedir}/config/${profileActive}</directory>
+            <outputDirectory>conf</outputDirectory>
+            <includes>
+                <include>*.yml</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.parent.basedir}/boot/target</directory>
+            <outputDirectory>jars</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+
+    <!--项目所有依赖包放到lib目录下-->
+    <!--<dependencySets>-->
+        <!--<dependencySet>-->
+            <!--<outputDirectory>lib</outputDirectory>-->
+        <!--</dependencySet>-->
+    <!--</dependencySets>-->
+
+</assembly>
